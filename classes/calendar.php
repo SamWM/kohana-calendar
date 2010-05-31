@@ -4,7 +4,6 @@ class Calendar {
 
 	public function __construct($date = null) {
 		$this->supplied_date = Date::today_if_null($date);
-		echo date('c', Date::start_of_month($this->supplied_date));
 	}
 
 	public function render($day_render = null, $caption_render = null) {
