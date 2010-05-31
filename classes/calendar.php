@@ -6,6 +6,39 @@ class Calendar {
 		$this->supplied_date = Date::today_if_null($date);
 	}
 
+	public function week_render($day_render = null, $caption_render = null) {
+		if($day_render == null)
+		{
+			$day_render = create_function('$day', 'return date(\'d\', $day);');
+		}
+		if($caption_render == null)
+		{
+			$caption_render = create_function('$date', 'return \'Week \'.date(\'W\', $date);');
+		}
+		$output = '<table class="calendar"><caption>'.call_user_func($caption_render, $this->supplied_date).'</caption><thead><th>';
+		$output.= implode('</th><th>', Date::week_days($this->supplied_date));
+		$output.= '</th></thead><tbody>';
+
+		$firstday = Date::start_of_week($this->supplied_date);
+		$lastday = Date::end_of_week($this->supplied_date);
+		
+		$day = $firstday;
+
+		$output.= '<tr>';
+
+		while( $day < $lastday ) {
+			$class = 'd'.date('j', $day).' m'.date('n', $day).' y'.date('Y', $day).' w'.date('W', $day);
+			if(date('j n Y', time()) == date('j n Y', $day)) $class.= ' today';
+			$output.= '<td class="'.$class.'">'.call_user_func($day_render, $day).'</td>';
+			$day = $day + Date::DAY;
+		}
+		$output.= '</tr>';
+		
+		$output.= '</tbody></table>';
+
+		return $output;
+	}
+
 	public function render($day_render = null, $caption_render = null) {
 		if($day_render == null)
 		{
